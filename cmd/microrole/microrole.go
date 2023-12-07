@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"microrole/internal/domain/config"
+	"microrole/internal/storage/clients/postgresql"
 	configManager "microrole/pkg/config"
 	"microrole/pkg/logger/handlers/slogpretty"
 	"os"
@@ -22,6 +23,12 @@ func main() {
 	fmt.Println("Start loading logger...")
 	logger := setupLogger(cfg.Env)
 	logger.Debug("Yey! Logger, Config enabled!")
+
+	logger.Debug("[Postgres] Creating connection pool with database...")
+	_, err := postgresql.New(cfg)
+	if err != nil {
+		panic("Cannot create connection pool with database. Error: " + err.Error())
+	}
 }
 
 func setupLogger(env string) *slog.Logger {
